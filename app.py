@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 import pickle
 import requests
+import zipfile
+import os
 
 # --- Function to fetch poster from TMDB ---
 def fetch_poster(movie_id):
@@ -33,7 +35,15 @@ def recommend(movie):
 # --- Load data ---
 movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
 movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+# Unzip only if not already done
+if not os.path.exists("similarity.pkl"):
+    with zipfile.ZipFile("similarity.zip", 'r') as zip_ref:
+        zip_ref.extractall(".")
+
+# Load the pickle
+with open("similarity.pkl", "rb") as f:
+    similarity = pickle.load(f)
+
 
 # --- Custom CSS to match your design ---
 st.markdown("""
